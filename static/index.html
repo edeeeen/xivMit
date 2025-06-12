@@ -1,3 +1,89 @@
-<body>
-    <a>Hello World!</a>
-</body>
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <!-- Use this type of comment within HTML -->
+        <title>Music Reccomendations</title>
+
+        <!-- this is your internal style sheet -->
+        <link rel="stylesheet" href="style/main.css">
+        <link rel="stylesheet" href="style/home.css">
+    </head>
+    <body>
+                <!--
+                <a href="myIndex.html">Home</a>
+                
+                &nbsp; <-- non breaking space used to give more space ->
+                | <-- vertical bar used as separator ->
+                &nbsp; <-- non breaking space used to give more space ->
+                <a href="blog.html">Blog</a>
+                &nbsp; <-- non breaking space used to give more space ->
+                &nbsp; <-- non breaking space used to give more space ->
+            -->
+                
+
+        <div id="content">
+        </div>
+    </body>
+    <script src='https://unpkg.com/react@18/umd/react.production.min.js'></script>
+    <script src='https://unpkg.com/react-dom@18/umd/react-dom.production.min.js'></script>
+    <!-- This CDN lets you use JSX (looks like HTML tags in JS) -->
+    <script src='https://unpkg.com/babel-standalone@6.26.0/babel.js'></script>
+
+    <!-- This CDN lets you use React Routing -->
+    <script src='https://unpkg.com/react-router-dom@5.0.0/umd/react-router-dom.min.js'></script>
+
+    <script src="js/Home.js"></script>
+
+    <script type="text/babel">
+
+        "use strict";
+
+
+        const Link = ReactRouterDOM.Link;
+        const Route = ReactRouterDOM.Route;
+
+        const App = () => (
+            <ReactRouterDOM.HashRouter>
+
+                <div id="titleNav">
+
+                    <div id="pageTitle">
+                        <Link to="/home">Home</Link>
+                    </div>
+
+                    <div id="nav">
+                        
+                        <div class="dropDown">
+                            <div class="dropHeader">Account</div>
+                            <div class="dropContent">
+
+                            </div>
+                        </div>
+
+                        <div class="dropDown">
+                            <div class="dropHeader">Search</div>
+                            <div class="dropContent">
+
+                            </div>
+                        </div>
+
+                        <div class="dropDown">
+                            <Link to="/blog">Blog</Link>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="content">
+                    <Route path="/" exact component={Home} />
+                    <Route path="/home" component={Home} /> 
+                </div>
+
+
+            </ReactRouterDOM.HashRouter>
+        );
+
+        ReactDOM.render(<App />, document.getElementById('content'));
+
+    </script>
+</html>

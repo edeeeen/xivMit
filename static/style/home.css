@@ -1,0 +1,14 @@
+.home #picture {
+    text-align:center;
+}
+
+.home #mainPic {
+    width:40%; 
+    border-radius:0.5rem;
+}
+
+.home #content img { /* this selector applies to images within #content */
+    width: 40%;
+    border-radius: 0.5rem;
+    box-shadow: 0.4rem 0.4rem 0.4rem rgba(0,0,0,0.6); /* color is black which is 60% solid */
+}

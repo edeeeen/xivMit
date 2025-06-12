@@ -19,22 +19,22 @@ def getEncounters():
             {
                 "shorthand" : "M5S",
                 "boss" : "Dancing Green",
-                "imgLink" : ""
+                "imgLink" : "content/m5s.png"
             },
             {
                 "shorthand" : "M6S",
                 "boss" : "Sugar Riot",
-                "imgLink" : ""
+                "imgLink" : "content/m6s.png"
             },
             {
                 "shorthand" : "M7S",
                 "boss" : "Brute Abominator",
-                "imgLink" : ""
+                "imgLink" : "content/m7s.png"
             },
             {
                 "shorthand" : "M8S",
                 "boss" : "Howling Blade",
-                "imgLink" : ""
+                "imgLink" : "content/m8s.png"
             }
         ],
         "Light-Heavyweight":[  
@@ -61,7 +61,6 @@ def getEncounters():
         ]
     }
 
-    
 
 
 # first 'static' specify route path, second 'static' specify html files directory.

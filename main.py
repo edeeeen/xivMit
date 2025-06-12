@@ -9,7 +9,7 @@ app = FastAPI()
 
 @app.get("/api")
 def read_root():
-    return {"Hello": "helpme"}
+    return {"Hello": "working?"}
 
 # first 'static' specify route path, second 'static' specify html files directory.
 app.mount('/', StaticFiles(directory='static',html=True))

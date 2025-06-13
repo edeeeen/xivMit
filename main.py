@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 import uvicorn
 from fastapi.staticfiles import StaticFiles
-import json 
-#import api
+from enum import Enum
+import json
+import db
 
 
 
@@ -13,7 +14,9 @@ def read_root():
     return {"Hello": "World1"}
 
 # returns a list of encounters and their properties
-@app.get("/encounters")
+# sorted newest to oldest
+# could be worth getting xivapi to do this so it auto updates
+@app.get("/api/getEncounters")
 def getEncounters():
     return {
         "Cruiserweight":[
@@ -42,26 +45,43 @@ def getEncounters():
             {
                 "shorthand" : "M1S",
                 "boss" : "Black Cat",
-                "imgLink" : ""
+                "imgLink" : "content/m1s.png"
             }, 
             {
                 "shorthand" : "M2S",
                 "boss" : "Honey Bee Lovely",
-                "imgLink" : ""
+                "imgLink" : "content/m2s.png"
             },
             {
                 "shorthand" : "M3S",
                 "boss" : "Brute Bomber",
-                "imgLink" : ""
+                "imgLink" : "content/m3s.png"
             },
             {
                 "shorthand" : "M4S",
                 "boss" : "Wicked Thunder",
-                "imgLink" : ""
+                "imgLink" : "content/m4s.png"
             }
         ]
     }
 
+#input values for getTemplates()
+class encounterNames(str, Enum):
+    m1s = "M1S"
+    m2s = "M2S"
+    m3s = "M3S"
+    m4s = "M4S"
+    m5s = "M5S"
+    m6s = "M6S"
+    m7s = "M7S"
+    m8s = "M8S"
+
+# Returns templates for specific encounter
+# Calls db.getTemplates() 
+@app.get("/api/getTemplates/{fight}")
+def getTemplates(fight: encounterNames):
+    db.getTemplates(fight)
+    return {"test" : fight}
 
 
 # first 'static' specify route path, second 'static' specify html files directory.

@@ -10,7 +10,7 @@ function Home() {
     React.useEffect(async () => {
         const fetchData = async () => {
             try {
-                const response = await fetch('encounters');
+                const response = await fetch('api/getEncounters');
                 const data = await response.json();
                 setEncountersJSON(data);
             } catch (error) {

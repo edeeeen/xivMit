@@ -9,23 +9,14 @@
         <link rel="stylesheet" href="style/main.css">
         <link rel="stylesheet" href="style/home.css">
         <link rel="stylesheet" href="style/dropdown.css">
+        <link rel="stylesheet" href="style/templates.css">
     </head>
-    <body>
-                <!--
-                <a href="myIndex.html">Home</a>
-                
-                &nbsp; <-- non breaking space used to give more space ->
-                | <-- vertical bar used as separator ->
-                &nbsp; <-- non breaking space used to give more space ->
-                <a href="blog.html">Blog</a>
-                &nbsp; <-- non breaking space used to give more space ->
-                &nbsp; <-- non breaking space used to give more space ->
-            -->
-                
 
+    <body>
         <div id="content">
         </div>
     </body>
+
     <script src='https://unpkg.com/react@18/umd/react.production.min.js'></script>
     <script src='https://unpkg.com/react-dom@18/umd/react-dom.production.min.js'></script>
     <!-- This CDN lets you use JSX (looks like HTML tags in JS) -->
@@ -36,7 +27,7 @@
 
 
     <script type="text/babel" src="react/Home.js"></script>
-
+    <script type="text/babel" src="react/Templates.js"></script>
 
     <script type="text/babel">
 
@@ -69,6 +60,7 @@
                 <div id="content">
                     <Route path="/" exact component={Home} />
                     <Route path="/home" component={Home} /> 
+                    <Route path={"/templates/:short"} component={Templates} /> 
                 </div>
 
 

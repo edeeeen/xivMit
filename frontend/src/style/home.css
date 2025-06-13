@@ -16,7 +16,7 @@
     margin-bottom: 2rem; /* Add space below each tier of encounters */
 }
 
-.encounterDiv > div { /* This targets the div containing each encounter's image and text */
+.encounter { /* This targets the div containing each encounter's image and text */
     width: 200px; /* Base width for the card */
     height: auto; /* Allow height to adjust based on content (image + text) */
     display: flex;
@@ -69,7 +69,7 @@
     color: #a4a4a4; /* A contrasting lighter grey color for bold text in dark theme */
 }
 
-.tierDiv {
+.home .tierDiv {
     margin-top: 2rem; /* Add space above each tier name */
     margin-bottom: 1rem; /* Add space below each tier name */
     color: #f8f8f2; /* Light color for tier names */
@@ -90,4 +90,5 @@
     display: flex; /* Use flexbox to organize content vertically within .home */
     flex-direction: column; /* Stack children vertically */
     justify-content: flex-start; /* Align content to the top */
+    padding-top: 3rem; /*Move "Choose an Encounter" down"*/
 }

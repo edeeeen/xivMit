@@ -59,7 +59,7 @@ body {
     background-color: transparent; /* Allows body background to show through on sides */
     color: #f8f8f2;
     flex-grow: 1; /* Allow content to grow and take available space */
-    padding-top: 0; /* Removed padding-top here as it was causing the gap */
+    padding-top: 2rem; /* Removed padding-top here as it was causing the gap */
     width: 100%; /* Ensure content spans full width */
     box-sizing: border-box; /* Include padding in width calculation */
     display: flex; /* Use flexbox to make .home div (its child) fill its height */

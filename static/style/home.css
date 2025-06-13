@@ -1,14 +1,93 @@
 .home #picture {
-    text-align:center;
+    text-align: center;
 }
 
 .home #mainPic {
-    width:40%; 
-    border-radius:0.5rem;
-}
-
-.home #content img { /* this selector applies to images within #content */
     width: 40%;
     border-radius: 0.5rem;
-    box-shadow: 0.4rem 0.4rem 0.4rem rgba(0,0,0,0.6); /* color is black which is 60% solid */
+}
+
+/* Styles for the containers of individual encounters */
+.encounterDiv {
+    display: flex; /* Use flexbox to display encounters next to each other */
+    flex-wrap: wrap; /* Allow encounters to wrap to the next line */
+    gap: 1rem; /* Add some space between encounter divs */
+    justify-content: center; /* Center align encounter divs within their container */
+    margin-bottom: 2rem; /* Add space below each tier of encounters */
+}
+
+.encounterDiv > div { /* This targets the div containing each encounter's image and text */
+    width: 200px; /* Base width for the card */
+    height: auto; /* Allow height to adjust based on content (image + text) */
+    display: flex;
+    flex-direction: column; /* Stack image/placeholder and text vertically */
+    align-items: center; /* Center content horizontally within the card */
+    justify-content: flex-start; /* Align content to the top (image then text) */
+    padding: 0.5rem; /* Padding for the entire card content */
+    box-sizing: border-box; /* Include padding in the width calculation */
+
+    border-radius: 0.5rem; /* Slightly rounded corners for the card */
+    overflow: hidden; /* Ensure content respects border-radius */
+    box-shadow: 0.2rem 0.2rem 0.4rem rgba(0, 0, 0, 0.3); /* Subtle shadow */
+    background-color: #2c2c2c; /* Dark grey background for the card */
+    color: #f8f8f2; /* Light text color for readability */
+    text-align: center; /* Center all text within this card */
+}
+
+.encounterImg {
+    width: 100%; /* Image fills the width of its parent (.encounterDiv > div) */
+    height: 100px; /* Fixed height for the image area within the card */
+    object-fit: cover; /* IMPORTANT: Crop the image to cover the area while maintaining aspect ratio */
+    border-radius: 0.25rem; /* Apply border-radius to the image itself */
+    margin-bottom: 0.5rem; /* Space between image and text */
+}
+
+.imgError {
+    width: 100%;
+    height: 100px; /* Fixed height for placeholder to match image area */
+    display: flex; /* Flex to center content */
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem; /* Larger font size for the shorthand initial */
+    background-color: #3a3a3a; /* A slightly lighter dark grey background for placeholder */
+    border-radius: 0.25rem; /* Match image border radius */
+    margin-bottom: 0.5rem; /* Space between placeholder and text */
+}
+
+.shorthand, .bossName {
+    font-size: 1rem; /* Increased font size for shorthand and boss name */
+    margin: 0.3rem 0; /* Adjusted vertical margin */
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+    text-align: center; /* Explicitly center the text within these paragraphs */
+    width: 100%; /* Ensure text paragraphs take full width for centering */
+}
+
+.font-semibold {
+    font-weight: 600; /* Make the "Shorthand:" and "Boss:" labels bold */
+    color: #a4a4a4; /* A contrasting lighter grey color for bold text in dark theme */
+}
+
+.tierDiv {
+    margin-top: 2rem; /* Add space above each tier name */
+    margin-bottom: 1rem; /* Add space below each tier name */
+    color: #f8f8f2; /* Light color for tier names */
+    font-size: 1.8rem; /* Slightly larger font for tier names */
+    text-align: center; /* Center the tier names */
+}
+
+/* New styles to center the main content on the page and its text */
+.home {
+    max-width: 1200px; /* Decreased max-width for the content area to make it slightly smaller */
+    margin: 0 auto; /* Center the content horizontally */
+    padding: 1rem; /* Add some padding to the sides */
+    text-align: center; /* Center all text within the home container */
+    background-color: #2c2c2c; /* Dark grey background for the home section (the centered block) */
+    color: #f8f8f2; /* Light text color for the home section */
+    flex-grow: 1; /* Allow .home to grow within #content */
+    box-sizing: border-box; /* Include padding in height calculation */
+    display: flex; /* Use flexbox to organize content vertically within .home */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: flex-start; /* Align content to the top */
 }

@@ -1,16 +1,16 @@
 
-/*  You can only use the "slash star ... star slash" style comment inside a style sheet */
-
-html, body {   /* Prevents tiny white border inside browser window. */
-    margin:0rem; 
-    padding:0rem; 
+html, body {
+    height: 100%; /* Ensure html and body take full height */
+    margin: 0;
+    padding: 0;
 }
 
-body { 
-    background-color: #C3C3C3; /* red, green, blue (255 is max)
-                                                this is the turqoise color */
-    color: black;  /* color of font */
-    font-family: sans-serif; /* "no tail" font is more readable for small font */
+body {
+    background-color: #1a1a1a; /* Even darker background for the overall page (sides) */
+    color: #f8f8f2; /* Light text color for the entire body */
+    display: flex; /* Use flexbox for body to manage overall layout */
+    flex-direction: column; /* Stack children vertically */
+    min-height: 100vh; /* Ensure body takes at least full viewport height */
 }
 
 
@@ -28,9 +28,10 @@ body {
 
     font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; 
     letter-spacing: 0.1rem; /* spaces out letters a bit */
-    color: white;   /* font color */
-    background-color:#2D2D2D;
     padding:0.5rem;
+    background-color: #3a3a3a; /* Lighter dark grey background for navigation bar */
+    color: #f8f8f2; /* Light text color for navigation bar */
+    flex-shrink: 0; /* Prevent titleNav from shrinking */
 }
 
 #pageTitle { 
@@ -46,31 +47,28 @@ body {
     white-space: nowrap;
 }
 
-#nav a {  /* this selector applies to links within #nav */
-    text-decoration:none;  /* Do not want links in "nav" to be underlined */
-    color: #C8C8C8; /* light gray: to specify color for links, you have to style the "a" tag */
-    
-}
-#nav a:hover {color: grey;} /* change hover color */
-
-#content {  /* Add padding top to prevent titleNav from covering up top of content. 
-                add padding bottom to prevent bottom content from getting hidden under footer. */ 
-    padding:2rem;
-    padding-top: 6rem; /* prevent the top of the content from getting hidden under the fixed titleNav */
-    padding-bottom: 2rem; /* prevent the the bottom of the content from getting hidden under the fixed footer */
-    font-size: 1.1rem;
+#nav a {
+    color: #a4a4a4; /* A contrasting lighter grey for navigation links */
 }
 
-        
-#footer { /* footer fixed, always at the bottom left */
-    position: fixed;
-    bottom: 0rem; 
-    left: 0rem; 
-    z-index: 1; /* make sure footer is on top of content which would have default z-index value of 0 */
+#nav a:hover {
+    color: grey;
+} /* change hover color */
 
-    background-color:#2D2D2D;
-    color: white; 
-    width:100%; /* fixed elements are not 100% by default like other divs would be */
-    text-align:center;
-    padding:0.5rem;	 	 
+#content {
+    background-color: transparent; /* Allows body background to show through on sides */
+    color: #f8f8f2;
+    flex-grow: 1; /* Allow content to grow and take available space */
+    padding-top: 0; /* Removed padding-top here as it was causing the gap */
+    width: 100%; /* Ensure content spans full width */
+    box-sizing: border-box; /* Include padding in width calculation */
+    display: flex; /* Use flexbox to make .home div (its child) fill its height */
+    padding-bottom: 0; /* Remove padding-bottom from #content */
+}
+
+#footer {
+    background-color: #1a1a1a; /* Darker background for footer */
+    color: #f8f8f2; /* Light text color for footer */
+    flex-shrink: 0; /* Prevent footer from shrinking */
+    width: 100%;
 }

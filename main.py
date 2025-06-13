@@ -12,6 +12,7 @@ app = FastAPI()
 def read_root():
     return {"Hello": "World"}
 
+# returns a list of encounters and their properties
 @app.get("/encounters")
 def getEncounters():
     return {

@@ -24,7 +24,7 @@ app.add_middleware(
 
 @app.get("/api")
 def read_root():
-    return {"Hello": "World1"}
+    return {"Hello": "World2"}
 
 # returns a list of encounters and their properties
 # sorted newest to oldest

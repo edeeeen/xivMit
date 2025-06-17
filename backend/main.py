@@ -11,12 +11,12 @@ import json
 import db
 import parameters as p
 
-
 app = FastAPI()
 
 # Allowed origins by CORS
 origins = [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "https://sleepycat.me"
 ]
 
 # Allow API to be used at different hosts named by origins variable
@@ -44,48 +44,47 @@ def getEncounters():
             {
                 "shorthand" : "M5S",
                 "boss" : "Dancing Green",
-                "imgLink" : "src/content/m5s.png"
+                "imgLink" : "m5s.png"
             },
             {
                 "shorthand" : "M6S",
                 "boss" : "Sugar Riot",
-                "imgLink" : "src/content/m6s.png"
+                "imgLink" : "m6s.png"
             },
             {
                 "shorthand" : "M7S",
                 "boss" : "Brute Abominator",
-                "imgLink" : "src/content/m7s.png"
+                "imgLink" : "m7s.png"
             },
             {
                 "shorthand" : "M8S",
                 "boss" : "Howling Blade",
-                "imgLink" : "src/content/m8s.png"
+                "imgLink" : "m8s.png"
             }
         ],
         "Light-Heavyweight":[  
             {
                 "shorthand" : "M1S",
                 "boss" : "Black Cat",
-                "imgLink" : "src/content/m1s.png"
+                "imgLink" : "m1s.png"
             }, 
             {
                 "shorthand" : "M2S",
                 "boss" : "Honey Bee Lovely",
-                "imgLink" : "src/content/m2s.png"
+                "imgLink" : "m2s.png"
             },
             {
                 "shorthand" : "M3S",
                 "boss" : "Brute Bomber",
-                "imgLink" : "src/content/m3s.png"
+                "imgLink" : "m3s.png"
             },
             {
                 "shorthand" : "M4S",
                 "boss" : "Wicked Thunder",
-                "imgLink" : "src/content/m4s.png"
+                "imgLink" : "m4s.png"
             }
         ]
     }
-
 
 # Unimplemented
 # Returns templates for specific encounter
@@ -97,5 +96,5 @@ def getTemplates(fight: p.encounterNames):
 
 
 # If its the main function then start the server on port 8000 using uvicorn
-if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=8000)
+#if __name__ == '__main__':
+#    uvicorn.run(app, host='0.0.0.0', port=8000)

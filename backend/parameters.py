@@ -4,6 +4,7 @@
 
 # Input values for getTemplates()
 # Is just shorthand neams for encounters
+from enum import Enum
 class encounterNames(str, Enum):
     m1s = "M1S"
     m2s = "M2S"

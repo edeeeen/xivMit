@@ -1,3 +1,9 @@
+/***************************************
+ *          Display Titlenav           *
+ *            Create Routes            *
+ *          Display Home page          *
+ ***************************************/
+
 import { useState, useEffect } from 'react'
 import './App.css'
 import 'react-dom/client';

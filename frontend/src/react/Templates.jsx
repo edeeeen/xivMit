@@ -1,10 +1,14 @@
-// Templates.jsx (corrected)
-import { useParams } from 'react-router-dom'; // Import useParams
+/**************************************************
+ *  Generate template component based on the URL  *
+ *Then request api for user templates and display *
+ **************************************************/
+import { useParams } from 'react-router-dom';
 
-export default function Templates() {
+function Templates() {
     const { short } = useParams(); // Get the 'short' parameter from the URL 
-    // short = "test"; // Remove this line unless you specifically need to override
     return (
         <div className="templates">You are looking at {short} templates</div>
     );
 }
+
+export default Templates;

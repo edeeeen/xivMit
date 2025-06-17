@@ -1,3 +1,7 @@
+/***************************************
+ *     API fetching script             *
+ ***************************************/
+
 import axios from 'axios';
 
 // Create an instance of axios with the base URL

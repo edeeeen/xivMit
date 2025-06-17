@@ -1,3 +1,7 @@
+#################################################################
+#                         FastAPI functions                     #
+#################################################################
+
 from fastapi import FastAPI
 import uvicorn
 from fastapi.staticfiles import StaticFiles
@@ -5,15 +9,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from enum import Enum
 import json
 import db
-
+import parameters as p
 
 
 app = FastAPI()
 
+# Allowed origins by CORS
 origins = [
     "http://localhost:5173"
 ]
 
+# Allow API to be used at different hosts named by origins variable
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -22,6 +28,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+# Test function for the API
 @app.get("/api")
 def read_root():
     return {"Hello": "World"}
@@ -29,6 +36,7 @@ def read_root():
 # returns a list of encounters and their properties
 # sorted newest to oldest
 # could be worth getting xivapi to do this so it auto updates
+# in the future will be saved in db
 @app.get("/api/getEncounters")
 def getEncounters():
     return {
@@ -78,26 +86,16 @@ def getEncounters():
         ]
     }
 
-#input values for getTemplates()
-class encounterNames(str, Enum):
-    m1s = "M1S"
-    m2s = "M2S"
-    m3s = "M3S"
-    m4s = "M4S"
-    m5s = "M5S"
-    m6s = "M6S"
-    m7s = "M7S"
-    m8s = "M8S"
 
+# Unimplemented
 # Returns templates for specific encounter
 # Calls db.getTemplates() 
 @app.get("/api/getTemplates/{fight}")
-def getTemplates(fight: encounterNames):
+def getTemplates(fight: p.encounterNames):
     db.getTemplates(fight)
     return {"test" : fight}
 
 
-# first 'static' specify route path, second 'static' specify html files directory.
-
+# If its the main function then start the server on port 8000 using uvicorn
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=8000)

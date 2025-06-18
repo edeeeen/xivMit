@@ -12,7 +12,7 @@ import db as dbConnection
 import parameters as p
 import os
 import pyodbc
-from contextlib import asynccontextmanager
+import logging
 
 connection_string = ""
 app = FastAPI()
@@ -62,38 +62,38 @@ async def startup_event():
                         f"TrustServerCertificate=no;"
                         f"Connection Timeout=30;"
                     )
-                    print(f"Connection string constructed from cred.json")
+                    logging.info(f"Connection string constructed from cred.json")
                 else:
                     # Raise error if not all db creds are found
-                    print(f"Error: Missing one or more required credentials (server, database, username, password) in cred.json.")
+                    logging.info(f"Error: Missing one or more required credentials (server, database, username, password) in cred.json.")
                     raise ValueError("Missing database credentials for startup.")
         except FileNotFoundError:
-            print(f"Error: creds.json not found.")
+            logging.info(f"Error: creds.json not found.")
             raise FileNotFoundError("creds.json missing for database connection.")
         except json.JSONDecodeError:
-            print(f"Error: creds.json is not valid JSON.")
+            logging.info(f"Error: creds.json is not valid JSON.")
             raise ValueError("Invalid JSON in creds.json.")
         except Exception as e:
-            print(f"An unexpected error occurred during creds.json processing: {e}")
+            logging.info(f"An unexpected error occurred during creds.json processing: {e}")
             raise Exception(f"Failed to process creds.json: {e}")
         # Check that connection_string was found properly and make connection
         if connection_string:
             try:
                 # Establish db connection
                 db_connection_object = pyodbc.connect(connection_string)
-                print("Successfully established pyodbc connection.")
+                logging.info("Successfully established pyodbc connection.")
                 
                 # Create db object and pass connection
                 app.db = dbConnection.db(db_connection_object)
-                print("DB handler instance created and stored on app.db.")
+                logging.info("DB handler instance created and stored on app.db.")
             except pyodbc.Error as ex:
-                print(f"ODBC Error during database connection: {ex}")
+                logging.info(f"ODBC Error during database connection: {ex}")
                 raise HTTPException(status_code=500, detail="Database connection error during startup.")
             except Exception as e:
-                print(f"General Error during startup connection: {e}")
+                logging.info(f"General Error during startup connection: {e}")
                 raise HTTPException(status_code=500, detail="Application startup failed due to database error.")
         else:
-            print("No valid connection string found. Cannot establish DB connection for startup.")
+            logging.info("No valid connection string found. Cannot establish DB connection for startup.")
             raise HTTPException(status_code=500, detail="No database connection string provided for startup.")
 
 # Function runs on shutdown

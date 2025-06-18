@@ -2,13 +2,14 @@
 #                Database Interaction Class                     #
 #################################################################
 import pyodbc
+import logging
 from fastapi import HTTPException
 
 class db:
     def __init__(self, cnxn_object):
         # Store the pyodbc connection object
         self.cnxn = cnxn_object
-        print("DB handler initialized with provided connection.")
+        logging.info("DB handler initialized with provided connection.")
 
     # Unimplemented
     # Queries DB for templates under the input encounter
@@ -18,7 +19,7 @@ class db:
     def getEncounters(self):
         # Check if db connection is good
         if not self.cnxn:
-            print("ERROR: No database connection found in getEncounters.")
+            logging.info("ERROR: No database connection found in getEncounters.")
             # Raise execption
             raise HTTPException(status_code=500, detail="Database connection not active.")
         
@@ -44,12 +45,12 @@ class db:
                     row_dict[col_name] = row[i]
                 results_as_dicts.append(row_dict)
             
-            print(f"Encounters fetched successfully. Count: {len(results_as_dicts)}")
+            logging.info(f"Encounters fetched successfully. Count: {len(results_as_dicts)}")
             return results_as_dicts # Return list of dictionaries
             
         except pyodbc.Error as e:
-            print(f"Error fetching encounters: {e}")
+            logging.info(f"Error fetching encounters: {e}")
             raise
         except Exception as e:
-            print(f"An unexpected error occurred in getEncounters: {e}")
+            logging.info(f"An unexpected error occurred in getEncounters: {e}")
             raise

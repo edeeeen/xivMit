@@ -89,25 +89,25 @@ async def startup_event():
         except Exception as e:
             logger.error(f"An unexpected error occurred during creds.json processing: {e}")
             raise Exception(f"Failed to process creds.json: {e}")
-        # Check that connection_string was found properly and make connection
-        if connection_string:
-            try:
-                # Establish db connection
-                db_connection_object = pyodbc.connect(connection_string)
-                logger.info("Successfully established pyodbc connection.")
-                
-                # Create db object and pass connection
-                app.db = dbConnection.db(db_connection_object)
-                logger.info("DB handler instance created and stored on app.db.")
-            except pyodbc.Error as ex:
-                logger.error(f"ODBC Error during database connection: {ex}")
-                raise HTTPException(status_code=500, detail="Database connection error during startup.")
-            except Exception as e:
-                logger.error(f"General Error during startup connection: {e}")
-                raise HTTPException(status_code=500, detail="Application startup failed due to database error.")
-        else:
-            logger.error("No valid connection string found. Cannot establish DB connection for startup.")
-            raise HTTPException(status_code=500, detail="No database connection string provided for startup.")
+    # Check that connection_string was found properly and make connection
+    if connection_string:
+        try:
+            # Establish db connection
+            db_connection_object = pyodbc.connect(connection_string)
+            logger.info("Successfully established pyodbc connection.")
+            
+            # Create db object and pass connection
+            app.db = dbConnection.db(db_connection_object)
+            logger.info("DB handler instance created and stored on app.db.")
+        except pyodbc.Error as ex:
+            logger.error(f"ODBC Error during database connection: {ex}")
+            raise HTTPException(status_code=500, detail="Database connection error during startup.")
+        except Exception as e:
+            logger.error(f"General Error during startup connection: {e}")
+            raise HTTPException(status_code=500, detail="Application startup failed due to database error.")
+    else:
+        logger.error("No valid connection string found. Cannot establish DB connection for startup.")
+        raise HTTPException(status_code=500, detail="No database connection string provided for startup.")
 
 # Function runs on shutdown
 # Close db connection

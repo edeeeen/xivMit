@@ -3,7 +3,6 @@
 #################################################################
 
 from fastapi import FastAPI, HTTPException
-import uvicorn
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from enum import Enum
@@ -12,6 +11,8 @@ import db as dbConnection
 import parameters as p
 import os
 import pyodbc
+import logging
+import sys
 
 connection_string = ""
 app = FastAPI()
@@ -31,14 +32,27 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+# Configure logging
+# By default, Python's logging module sends messages to stderr.
+# Azure App Services capture stdout and stderr, making them visible in the Log Stream.
+logging.basicConfig(
+    level=logging.INFO, # Set the desired logging level (e.g., DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 
+# Get a logger instance for your application
+logger = logging.getLogger(__name__)
 
 # Startup function
 # Init db connection and create db object
 @app.on_event("startup")
 async def startup_event():
+
+
     # if on azure then this will get the db credentials from the enviornment variable
     connection_string = os.environ.get('SQL_CONNECTION_STRING')
+    ################## debug ###################
+    logger.info(connection_string)
     # Check if env variable is found or not
     if connection_string is None:
         try:
@@ -61,38 +75,38 @@ async def startup_event():
                         f"TrustServerCertificate=no;"
                         f"Connection Timeout=30;"
                     )
-                    print(f"Connection string constructed from cred.json")
+                    logger.info(f"Connection string constructed from cred.json")
                 else:
                     # Raise error if not all db creds are found
-                    print(f"Error: Missing one or more required credentials (server, database, username, password) in cred.json.")
+                    logger.error(f"Error: Missing one or more required credentials (server, database, username, password) in cred.json.")
                     raise ValueError("Missing database credentials for startup.")
         except FileNotFoundError:
-            print(f"Error: creds.json not found.")
+            logger.error(f"Error: creds.json not found.")
             raise FileNotFoundError("creds.json missing for database connection.")
         except json.JSONDecodeError:
-            print(f"Error: creds.json is not valid JSON.")
+            logger.error(f"Error: creds.json is not valid JSON.")
             raise ValueError("Invalid JSON in creds.json.")
         except Exception as e:
-            print(f"An unexpected error occurred during creds.json processing: {e}")
+            logger.error(f"An unexpected error occurred during creds.json processing: {e}")
             raise Exception(f"Failed to process creds.json: {e}")
         # Check that connection_string was found properly and make connection
         if connection_string:
             try:
                 # Establish db connection
                 db_connection_object = pyodbc.connect(connection_string)
-                print("Successfully established pyodbc connection.")
+                logger.info("Successfully established pyodbc connection.")
                 
                 # Create db object and pass connection
                 app.db = dbConnection.db(db_connection_object)
-                print("DB handler instance created and stored on app.db.")
+                logger.info("DB handler instance created and stored on app.db.")
             except pyodbc.Error as ex:
-                print(f"ODBC Error during database connection: {ex}")
+                logger.error(f"ODBC Error during database connection: {ex}")
                 raise HTTPException(status_code=500, detail="Database connection error during startup.")
             except Exception as e:
-                print(f"General Error during startup connection: {e}")
+                logger.error(f"General Error during startup connection: {e}")
                 raise HTTPException(status_code=500, detail="Application startup failed due to database error.")
         else:
-            print("No valid connection string found. Cannot establish DB connection for startup.")
+            logger.error("No valid connection string found. Cannot establish DB connection for startup.")
             raise HTTPException(status_code=500, detail="No database connection string provided for startup.")
 
 # Function runs on shutdown
@@ -102,9 +116,22 @@ async def shutdown_event():
     # Ensure the connection object exists before trying to close it
     if hasattr(app, 'db') and hasattr(app.db, 'cnxn') and app.db.cnxn:
         app.db.cnxn.close()
-        print("Database connection closed during shutdown.")
+        logger.info("Database connection closed during shutdown.")
 
-
+@app.get("/log_test")
+async def log_test():
+    """
+    Endpoint to demonstrate different logging levels.
+    """
+    logger.debug("This is a debug message.") # Will not appear if level is INFO or higher
+    logger.info("This is an info message from /log_test.")
+    logger.warning("This is a warning message.")
+    logger.error("This is an error message.")
+    try:
+        1 / 0
+    except ZeroDivisionError:
+        logger.exception("An exception occurred while trying to divide by zero!")
+    return {"message": "Logged various messages. Check your Azure Web App's Log Stream."}
 
 # Test function for the API
 @app.get("/api")

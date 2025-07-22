@@ -2,20 +2,71 @@
 #                         FastAPI functions                     #
 #################################################################
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBearer, OAuth2PasswordBearer
+from fastapi.openapi.models import OAuthFlows, OAuthFlowAuthorizationCode, OAuthFlowPassword
+
+from contextlib import asynccontextmanager # Import asynccontextmanager
 from enum import Enum
 import json
-import db as dbConnection
-import parameters as p
 import os
-import pyodbc
 import logging
-import sys
+from routers.auth.auth import router as auth_router 
+from starlette.middleware.sessions import SessionMiddleware 
+from typing import Optional, List, Dict
+from dotenv import load_dotenv
+
+import model
+import db.dbModels as dbModels
+from db.db import db_dependency
+import parameters as p
+
+load_dotenv()
 
 connection_string = ""
-app = FastAPI()
+
+SESSION_SECRET_KEY = os.getenv("SESSION_SECRET_KEY")
+if SESSION_SECRET_KEY is None:
+    raise Exception("SESSION_SECRET_KEY environment variable not set. Please add it to your .env file.")
+
+SECRET_KEY = os.getenv("SECRET_KEY") # Ensure this is loaded if not already in services.py check
+if SECRET_KEY is None:
+    raise Exception("SECRET_KEY environment variable not set. Please add it to your .env file.")
+
+bearer_scheme = HTTPBearer(
+    description="Bearer authentication using a JWT. Obtain token from Google OAuth flow.",
+    scheme_name="Bearer Auth" # This is the name that will appear in the docs UI
+)
+
+# Configure logging
+# By default, Python's logging module sends messages to stderr.
+# Azure App Services capture stdout and stderr, making them visible in the Log Stream.
+logging.basicConfig(
+    level=logging.INFO, # Set the desired logging level (e.g., DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+# Get a logger instance for your application
+logger = logging.getLogger(__name__)
+
+# Startup function
+# Init db connection and create db object
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.error("Application starting")
+    yield
+    logger.error("Application shutting down, cleaning up")
+
+descript = """
+*XIVMit API*
+"""
+
+app = FastAPI(
+    lifespan=lifespan,
+    description=descript
+)
 
 # Allowed origins by CORS
 origins = [
@@ -32,106 +83,10 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-# Configure logging
-# By default, Python's logging module sends messages to stderr.
-# Azure App Services capture stdout and stderr, making them visible in the Log Stream.
-logging.basicConfig(
-    level=logging.INFO, # Set the desired logging level (e.g., DEBUG, INFO, WARNING, ERROR, CRITICAL)
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET_KEY)
 
-# Get a logger instance for your application
-logger = logging.getLogger(__name__)
+app.include_router(auth_router)
 
-# Startup function
-# Init db connection and create db object
-@app.on_event("startup")
-async def startup_event():
-
-
-    # if on azure then this will get the db credentials from the enviornment variable
-    connection_string = os.environ.get('SQL_CONNECTION_STRING')
-    ################## debug ###################
-    logger.info(connection_string)
-    # Check if env variable is found or not
-    if connection_string is None:
-        try:
-            # Try to open creds.json and read db connection string
-            with open('creds.json', 'r') as file:
-                credentials = json.load(file)
-                server = credentials.get('server')
-                database = credentials.get('database')
-                uid = credentials.get('username')
-                pwd = credentials.get('password')
-                # If everything is found in creds.json then create connection string
-                if server and database and uid and pwd:
-                    connection_string = (
-                        f"DRIVER={{ODBC Driver 17 for SQL Server}};"
-                        f"SERVER={server};"
-                        f"DATABASE={database};"
-                        f"UID={uid};"
-                        f"PWD={pwd};"
-                        f"Encrypt=yes;"
-                        f"TrustServerCertificate=no;"
-                        f"Connection Timeout=30;"
-                    )
-                    logger.info(f"Connection string constructed from cred.json")
-                else:
-                    # Raise error if not all db creds are found
-                    logger.error(f"Error: Missing one or more required credentials (server, database, username, password) in cred.json.")
-                    raise ValueError("Missing database credentials for startup.")
-        except FileNotFoundError:
-            logger.error(f"Error: creds.json not found.")
-            raise FileNotFoundError("creds.json missing for database connection.")
-        except json.JSONDecodeError:
-            logger.error(f"Error: creds.json is not valid JSON.")
-            raise ValueError("Invalid JSON in creds.json.")
-        except Exception as e:
-            logger.error(f"An unexpected error occurred during creds.json processing: {e}")
-            raise Exception(f"Failed to process creds.json: {e}")
-    # Check that connection_string was found properly and make connection
-    if connection_string:
-        try:
-            # Establish db connection
-            db_connection_object = pyodbc.connect(connection_string)
-            logger.info("Successfully established pyodbc connection.")
-            
-            # Create db object and pass connection
-            app.db = dbConnection.db(db_connection_object)
-            logger.info("DB handler instance created and stored on app.db.")
-        except pyodbc.Error as ex:
-            logger.error(f"ODBC Error during database connection: {ex}")
-            raise HTTPException(status_code=500, detail="Database connection error during startup.")
-        except Exception as e:
-            logger.error(f"General Error during startup connection: {e}")
-            raise HTTPException(status_code=500, detail="Application startup failed due to database error.")
-    else:
-        logger.error("No valid connection string found. Cannot establish DB connection for startup.")
-        raise HTTPException(status_code=500, detail="No database connection string provided for startup.")
-
-# Function runs on shutdown
-# Close db connection
-@app.on_event("shutdown")
-async def shutdown_event():
-    # Ensure the connection object exists before trying to close it
-    if hasattr(app, 'db') and hasattr(app.db, 'cnxn') and app.db.cnxn:
-        app.db.cnxn.close()
-        logger.info("Database connection closed during shutdown.")
-
-@app.get("/log_test")
-async def log_test():
-    """
-    Endpoint to demonstrate different logging levels.
-    """
-    logger.debug("This is a debug message.") # Will not appear if level is INFO or higher
-    logger.info("This is an info message from /log_test.")
-    logger.warning("This is a warning message.")
-    logger.error("This is an error message.")
-    try:
-        1 / 0
-    except ZeroDivisionError:
-        logger.exception("An exception occurred while trying to divide by zero!")
-    return {"message": "Logged various messages. Check your Azure Web App's Log Stream."}
 
 # Test function for the API
 @app.get("/api")
@@ -143,37 +98,26 @@ def read_root():
 # sorted newest to oldest
 # could be worth getting xivapi to do this so it auto updates
 # Might not be worth using db for this at all since it update so infrequently and its small
-@app.get("/api/getEncounters")
-def getEncounters():
-    # Check db connection is good
-    if not hasattr(app, 'db'):
-        raise HTTPException(status_code=500, detail="Database handler not initialized during startup.")
-    
-    # Get encounters from db
-    results = app.db.getEncounters() # This will now call the method on the correct instance
-    transformed_output = {}
+@app.get("/api/getEncounters", response_model=model.CategorizedEncounterResponse)
+async def get_fights_by_category(db: db_dependency):
+    all_encounters = db.query(dbModels.DBEncounter).all()
 
-    # Format output json and remove whitespace
-    for encounter in results:
-        # Get tier and strip whitespace
-        tier = encounter.get("tier")
-        if tier and isinstance(tier, str):
-            tier = tier.strip()
+    categorized_data: Dict[str, List[model.EncounterDetail]] = {}
 
-        if tier:
-            # Create a dictionary for the current encounter's details, stripping whitespace
-            encounter_details = {
-                "shorthand": encounter.get("shorthand").strip() if isinstance(encounter.get("shorthand"), str) else encounter.get("shorthand"),
-                "boss": encounter.get("boss").strip() if isinstance(encounter.get("boss"), str) else encounter.get("boss"),
-                "imgLink": encounter.get("imgLink").strip() if isinstance(encounter.get("imgLink"), str) else encounter.get("imgLink")
-            }
-            # If the tier is not yet a key in the transformed_output, add it
-            if tier not in transformed_output:
-                transformed_output[tier] = []
-            # Append the encounter details to the list for the corresponding tier
-            transformed_output[tier].append(encounter_details)
-    
-    return transformed_output
+    for encounter in all_encounters:
+        # Use the 'tier' column for categorization
+        category = encounter.tier
+        if category not in categorized_data:
+            categorized_data[category] = []
+
+        Encounter_detail = model.EncounterDetail(
+            shorthand=encounter.shorthand,
+            boss=encounter.boss,
+            imgLink=encounter.imgLink
+        )
+        categorized_data[category].append(Encounter_detail)
+
+    return categorized_data
     '''return {
         "Cruiserweight":[
             {
@@ -221,10 +165,66 @@ def getEncounters():
         ]
     }'''
 
-# Unimplemented
+
+# Unimplemented test function
 # Returns templates for specific encounter
 # Calls db.getTemplates() 
 @app.get("/api/getTemplates/{fight}")
 def getTemplates(fight: p.encounterNames):
-    app.db.getTemplates(fight)
-    return {"test" : fight}
+    #app.db.getTemplates(fight)
+    return {
+        0 : {
+            "name" : "johns cool template",
+            "fight" : "M5S",
+            "user" : "john smith",
+            "description" : "test templates",
+            "bookmarks" : 10,
+            "views" : 20,
+            "id" : "asdf"
+        }, 
+        1 : {
+            "name" : "johns cool template",
+            "fight" : "M5S",
+            "user" : "john smith 1",
+            "description" : "test templates",
+            "bookmarks" : 10,
+            "views" : 20,
+            "id" : "asdf"
+        }, 
+        2 : {
+            "name" : "johns cool template",
+            "fight" : "M5S",
+            "user" : "john smith 2",
+            "description" : "test templates",
+            "bookmarks" : 10,
+            "views" : 20,
+            "id" : "asdf"
+        }, 
+        3 : {
+            "name" : "johns cool template",
+            "fight" : "M5S",
+            "user" : "john smith 3",
+            "description" : "test templates",
+            "bookmarks" : 10,
+            "views" : 20,
+            "id" : "asdf"
+        }, 
+        4 : {
+            "name" : "johns cool template",
+            "fight" : "M5S",
+            "user" : "john smith 4",
+            "description" : "test templates",
+            "bookmarks" : 10,
+            "views" : 20,
+            "id" : "asdf"
+        }, 
+        5 : {
+            "name" : "johns cool template",
+            "fight" : "M5S",
+            "user" : "john smith 5",
+            "description" : "test templates",
+            "bookmarks" : 10,
+            "views" : 20,
+            "id" : "asdf"
+        }
+    }

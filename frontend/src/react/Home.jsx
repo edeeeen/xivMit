@@ -51,6 +51,7 @@ function Home() {
                     <div className="encounterDiv">
                         {/*Map the actual fights aspect of the JSON to different divs*/}
                         {encountersJSON[tierName].map((encounter, index) => (
+                            
                             // Set the div to be a clickable Link element to link to /templates/{shorthand}
                             <Link to={`templates/${encounter.shorthand}`} key={`${tierName}-${index}`} className="encounter">
                                 {/*Display image/check for errors*/}

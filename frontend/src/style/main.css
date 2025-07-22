@@ -63,7 +63,7 @@ body {
     width: 100%; /* Ensure content spans full width */
     box-sizing: border-box; /* Include padding in width calculation */
     display: flex; /* Use flexbox to make .home div (its child) fill its height */
-    padding-bottom: 0; /* Remove padding-bottom from #content */
+    padding-top: 4rem; /*Move "Choose an Encounter" down"*/
 }
 
 #footer {

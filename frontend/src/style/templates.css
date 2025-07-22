@@ -1,3 +1,38 @@
-.templates {
-    padding-top : 3rem;
+.templatesDiv .template {
+    display: flex; /* Use flexbox to display encounters next to each other */
+    flex-wrap: wrap; /* Allow encounters to wrap to the next line */
+    gap: 1rem; /* Add some space between encounter divs */
+    justify-content: center; /* Center align encounter divs within their container */
+    margin-bottom: 2rem; /* Add space below each tier of encounters */
+}
+.templatesDiv .template {
+    width: 200px; /* Base width for the card */
+    height: auto; /* Allow height to adjust based on content (image + text) */
+    display: flex;
+    flex-direction: column; /* Stack image/placeholder and text vertically */
+    align-items: center; /* Center content horizontally within the card */
+    justify-content: flex-start; /* Align content to the top (image then text) */
+    padding: 0.5rem; /* Padding for the entire card content */
+    box-sizing: border-box; /* Include padding in the width calculation */
+
+    border-radius: 0.5rem; /* Slightly rounded corners for the card */
+    overflow: hidden; /* Ensure content respects border-radius */
+    box-shadow: 0.2rem 0.2rem 0.4rem rgba(0, 0, 0, 0.3); /* Subtle shadow */
+    background-color: #2c2c2c; /* Dark grey background for the card */
+    color: #f8f8f2; /* Light text color for readability */
+    text-align: center; /* Center all text within this card */
+}
+
+.templatesDiv {
+    max-width: 1200px; /* Decreased max-width for the content area to make it slightly smaller */
+    margin: 0 auto; /* Center the content horizontally */
+    text-align: center; /* Center all text within the home container */
+    background-color: #2c2c2c; /* Dark grey background for the home section (the centered block) */
+    color: #f8f8f2; /* Light text color for the home section */
+    flex-grow: 1; /* Allow .home to grow within #content */
+    box-sizing: border-box; /* Include padding in height calculation */
+    display: flex; /* Use flexbox to organize content vertically within .home */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: flex-start; /* Align content to the top */
+    padding: 1rem; /* Add some padding to the sides */
 }

@@ -81,7 +81,6 @@
 .home {
     max-width: 1200px; /* Decreased max-width for the content area to make it slightly smaller */
     margin: 0 auto; /* Center the content horizontally */
-    padding: 1rem; /* Add some padding to the sides */
     text-align: center; /* Center all text within the home container */
     background-color: #2c2c2c; /* Dark grey background for the home section (the centered block) */
     color: #f8f8f2; /* Light text color for the home section */
@@ -90,5 +89,6 @@
     display: flex; /* Use flexbox to organize content vertically within .home */
     flex-direction: column; /* Stack children vertically */
     justify-content: flex-start; /* Align content to the top */
-    padding-top: 3rem; /*Move "Choose an Encounter" down"*/
+    padding: 1rem; /* Add some padding to the sides */
+
 }
